@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toy & Shape Spelling Adventure</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#7048e8,#31b9d5);
+  min-height:100vh;display:flex;justify-content:center;
+  align-items:center;padding:16px;color:#26345b
+}
+.game{
+  background:#fff;border-radius:28px;padding:24px;
+  width:100%;max-width:520px;text-align:center;
+  box-shadow:0 12px 35px #17255440
+}
+h1{color:#7048e8;font-size:clamp(25px,6vw,36px);margin:8px 0}
+h2{color:#7048e8}
+p{line-height:1.5}
+.teacher{color:#64748b;font-weight:bold;margin:12px}
+input{
+  width:100%;padding:15px;border:3px solid #d9d0ff;
+  border-radius:14px;font-size:18px;text-align:center;
+  margin:12px 0;outline-color:#7048e8
+}
+button{
+  border:0;border-radius:14px;padding:14px 20px;
+  font-size:17px;font-weight:bold;cursor:pointer;
+  background:#7048e8;color:white;width:100%;margin-top:10px
+}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:active{transform:scale(.98)}
+.hidden{display:none!important}
+.stats{display:flex;justify-content:space-between;gap:8px;
+  font-weight:bold;margin:16px 0;flex-wrap:wrap}
+.stat{background:#f1edff;border-radius:12px;padding:10px;flex:1}
+.picture{
+  height:190px;background:#f1f7ff;border-radius:22px;
+  display:flex;align-items:center;justify-content:center;
+  margin:16px 0;font-size:105px
+}
+.shape{width:125px;height:125px}
+#feedback{font-size:23px;font-weight:bold;min-height:34px;margin:12px 0}
+.good{color:#10a56b}.bad{color:#e5484d}
+.small{color:#718096;font-size:14px}
+#endIcon{font-size:70px}
+</style>
+</head>
+<body>
+<div class="game">
+
+  <!-- START SCREEN -->
+  <section id="startScreen">
+    <div style="font-size:65px">🧸🎨🚂</div>
+    <h1>Toy & Shape<br>Spelling Adventure</h1>
+    <p>Look, listen, and spell!</p>
+    <div class="teacher">Teacher: Ms. Ramezanzadeh</div>
+    <label for="playerName"><b>Enter Your Name</b></label>
+    <input id="playerName" maxlength="20"
+           placeholder="Your name..." autocomplete="off">
+    <button onclick="startGame()">START GAME</button>
+    <p class="small">Get ready for a spelling adventure!</p>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section id="gameScreen" class="hidden">
+    <h2>Toy & Shape Spelling</h2>
+    <div id="welcome" class="small"></div>
+    <div class="stats">
+      <div class="stat">⭐ Score: <span id="score">0</span></div>
+      <div class="stat">❤️ Lives: <span id="lives">5</span></div>
+      <div class="stat">📝 <span id="number">1</span>/13</div>
+    </div>
+
+    <div class="picture" id="picture"></div>
+    <p><b>Spell the word!</b></p>
+    <form id="answerForm">
+      <input id="answer" placeholder="Type your answer..."
+             autocomplete="off" autocapitalize="none"
+             spellcheck="false">
+      <button type="submit" id="checkButton">CHECK ANSWER</button>
+    </form>
+    <div id="feedback" aria-live="polite"></div>
+    <button id="nextButton" class="hidden" onclick="nextQuestion()">
+      NEXT WORD →
+    </button>
+    <p class="small">Teacher: Ms. Ramezanzadeh</p>
+  </section>
+
+  <!-- GAME OVER SCREEN -->
+  <section id="endScreen" class="hidden">
+    <div id="endIcon">🏆</div>
+    <h1 id="endTitle">GAME OVER!</h1>
+    <h2 id="finalName"></h2>
+    <p id="finalScore"></p>
+    <p id="finalMessage"></p>
+    <div class="teacher">Teacher: Ms. Ramezanzadeh</div>
+    <button onclick="restartGame()">PLAY AGAIN</button>
+  </section>
+</div>
+
+<script>
+const items = [
+  {word:"plane",type:"toy",emoji:"✈️"},
+  {word:"train",type:"toy",emoji:"🚂"},
+  {word:"car",type:"toy",emoji:"🚗"},
+  {word:"ball",type:"toy",emoji:"⚽"},
+  {word:"doll",type:"toy",emoji:"🪆"},
+  {word:"monster",type:"toy",emoji:"👾"},
+  {word:"computer game",type:"toy",emoji:"🎮"},
+  {word:"kite",type:"toy",emoji:"🪁"},
+  {word:"bike",type:"toy",emoji:"🚲"},
+  {word:"circle",type:"shape"},
+  {word:"square",type:"shape"},
+  {word:"rectangle",type:"shape"},
+  {word:"triangle",type:"shape"}
+];
+
+const praise = [
+  "Excellent! 🌟",
+  "Perfect! 🎉",
+  "Amazing! ⭐",
+  "Brilliant! 🏆",
+  "Fantastic! 🎈",
+  "Well Done! 👏",
+  "Awesome! 💖"
+];
+
+let questions=[],index=0,score=0,lives=5;
+let player="",locked=false;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+
+function startGame(){
+  player=$("playerName").value.trim();
+  if(!player){
+    $("playerName").focus();
+    $("playerName").placeholder="Please enter your name!";
+    return;
+  }
+  score=0;lives=5;index=0;locked=false;
+  questions=shuffle([...items]);
+  $("startScreen").classList.add("hidden");
+  $("endScreen").classList.add("hidden");
+  $("gameScreen").classList.remove("hidden");
+  $("welcome").textContent="Good luck, "+player+"!";
+  showQuestion();
+}
+
+function drawShape(word){
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("viewBox","0 0 140 140");
+  svg.setAttribute("class","shape");
+  let el;
+  if(word==="circle"){
+    el=document.createElementNS(svg.namespaceURI,"circle");
+    el.setAttribute("cx",70);el.setAttribute("cy",70);
+    el.setAttribute("r",53);el.setAttribute("fill","#ffc94a");
+  }else if(word==="square"){
+    el=document.createElementNS(svg.namespaceURI,"rect");
+    el.setAttribute("x",20);el.setAttribute("y",20);
+    el.setAttribute("width",100);el.setAttribute("height",100);
+    el.setAttribute("fill","#48b7ee");
+  }else if(word==="rectangle"){
+    el=document.createElementNS(svg.namespaceURI,"rect");
+    el.setAttribute("x",8);el.setAttribute("y",35);
+    el.setAttribute("width",124);el.setAttribute("height",70);
+    el.setAttribute("fill","#58d68d");
+  }else{
+    el=document.createElementNS(svg.namespaceURI,"polygon");
+    el.setAttribute("points","70,8 130,124 10,124");
+    el.setAttribute("fill","#ff83b5");
+  }
+  el.setAttribute("stroke","#ffffff");
+  el.setAttribute("stroke-width","4");
+  svg.appendChild(el);
+  return svg;
+}
+
+function showQuestion(){
+  locked=false;
+  const q=questions[index];
+  $("number").textContent=index+1;
+  $("score").textContent=score;
+  $("lives").textContent="❤️ ".repeat(lives);
+  $("picture").replaceChildren();
+  if(q.type==="toy"){
+    $("picture").textContent=q.emoji;
+  }else{
+    $("picture").appendChild(drawShape(q.word));
+  }
+  $("answer").value="";
+  $("answer").disabled=false;
+  $("checkButton").disabled=false;
+  $("feedback").textContent="";
+  $("feedback").className="";
+  $("nextButton").classList.add("hidden");
+  $("checkButton").classList.remove("hidden");
+  $("answer").focus();
+}
+
+function sound(correct){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    [0,1,2].slice(0,correct?3:1).forEach((n)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.frequency.value=correct?523+n*140:220;
+      gain.gain.value=0.07;
+      osc.start(ctx.currentTime+n*0.11);
+      osc.stop(ctx.currentTime+n*0.11+0.09);
+    });
+  }catch(e){}
+}
+
+$("answerForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  if(locked)return;
+  const typed=$("answer").value.trim().toLowerCase();
+  if(!typed){
+    $("feedback").textContent="Type your answer first!";
+    $("feedback").className="bad";
+    return;
+  }
+  if(typed===questions[index].word){
+    locked=true;
+    score+=10;
+    $("score").textContent=score;
+    $("feedback").textContent=praise[Math.floor(Math.random()*praise.length)];
+    $("feedback").className="good";
+    $("answer").disabled=true;
+    $("checkButton").classList.add("hidden");
+    $("nextButton").classList.remove("hidden");
+    sound(true);
+  }else{
+    lives--;
+    $("lives").textContent="❤️ ".repeat(lives);
+    $("feedback").textContent="Oops! Try Again! 💪";
+    $("feedback").className="bad";
+    sound(false);
+    if(lives<=0){
+      setTimeout(endGame,700);
+    }
+  }
+});
+
+function nextQuestion(){
+  if(!locked)return;
+  index++;
+  if(index>=questions.length){
+    endGame();
+  }else{
+    showQuestion();
+  }
+}
+
+function endGame(){
+  $("gameScreen").classList.add("hidden");
+  $("endScreen").classList.remove("hidden");
+  $("endTitle").textContent="GAME OVER!";
+  $("endIcon").textContent=score>=100?"🏆":"🎮";
+  $("finalName").textContent="Great effort, "+player+"!";
+  $("finalScore").textContent="Your Score: "+score+" / 130";
+  $("finalMessage").textContent=
+    lives<=0?"Keep practicing! You can do it!":
+    score===130?"Perfect score! You are a spelling champion!":
+    "Excellent effort! Keep learning and have fun!";
+}
+
+function restartGame(){
+  $("endScreen").classList.add("hidden");
+  $("startScreen").classList.remove("hidden");
+  $("playerName").value=player;
+  $("playerName").focus();
+}
+</script>
+</body>
+</html>
