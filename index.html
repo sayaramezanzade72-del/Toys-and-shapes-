@@ -1,0 +1,713 @@
+
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="en">
+<title>Toy & Shape Spelling Adventure</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  language: en;
+}
+
+body.notranslate {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #a1eafb, #e8d5ff, #ffe1ec);
+  color: #26345c;
+}
+
+.notranslate,
+.notranslate * {
+  translate: no;
+}
+
+.game {
+  width: 100%;
+  max-width: 650px;
+  padding: clamp(14px, 4vw, 26px);
+  text-align: center;
+  background: #ffffff;
+  border: 4px solid #ffffff;
+  border-radius: 26px;
+  box-shadow: 0 10px 30px #52608035;
+}
+
+h1 {
+  color: #7554c9;
+  font-size: clamp(25px, 6vw, 38px);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  color: #ff668c;
+}
+
+.teacher {
+  color: #7554c9;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.subtitle,
+.small {
+  color: #68728b;
+}
+
+input {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  margin: 12px auto;
+  padding: 14px;
+  border: 3px solid #d9c9ff;
+  border-radius: 14px;
+  font-size: 18px;
+  text-align: center;
+  outline: none;
+  background: #ffffff;
+  color: #26345c;
+}
+
+input:focus {
+  border-color: #8967ed;
+}
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 13px 18px;
+  margin: 6px;
+  min-height: 46px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  background: #8061df;
+  box-shadow: 0 4px 0 #5d43b0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+button:active {
+  transform: translateY(2px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.green {
+  background: #23b98b;
+  box-shadow: 0 4px 0 #168563;
+}
+
+.orange {
+  background: #ff9b45;
+  box-shadow: 0 4px 0 #d87527;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+  font-weight: bold;
+}
+
+.info span {
+  background: #f2edff;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.progress {
+  height: 12px;
+  background: #eee9fb;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #24c79a, #8e70ee);
+  transition: width 0.3s;
+}
+
+.picture {
+  margin: 16px 0;
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #fff4c7, #ffe2ee);
+}
+
+#emoji {
+  font-size: clamp(75px, 20vw, 125px);
+  line-height: 1.5;
+}
+
+#category {
+  color: #7b65b8;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+#instruction {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#feedback {
+  min-height: 36px;
+  margin: 14px 0;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+#answer {
+  text-transform: lowercase;
+}
+
+#endScreen h1 {
+  font-size: clamp(32px, 8vw, 44px);
+  color: #ff668c;
+}
+
+@media (max-width: 420px) {
+  body.notranslate {
+    padding: 8px;
+    align-items: flex-start;
+  }
+
+  .game {
+    margin: auto 0;
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  button {
+    max-width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .info {
+    font-size: 13px;
+    justify-content: center;
+  }
+
+  .info span {
+    padding: 8px;
+  }
+}
+</style>
+</head>
+
+<body class="notranslate">
+
+<div class="game notranslate" translate="no">
+
+  <section id="startScreen">
+    <div style="font-size:60px" aria-hidden="true">🧸 🚂 🎈</div>
+    <h1>Toy &amp; Shape Spelling Adventure!</h1>
+    <p class="subtitle">Listen, look, and spell the word!</p>
+
+    <p><strong>What's your name?</strong></p>
+
+    <input id="playerName"
+      type="text"
+      placeholder="Enter your name"
+      maxlength="20"
+      autocomplete="off"
+      autocapitalize="words"
+      lang="en"
+      translate="no">
+
+    <button id="startButton" type="button">LET'S PLAY!</button>
+
+    <p class="teacher">Teacher: Ms. Ramezanzadeh</p>
+  </section>
+
+  <section id="gameScreen" class="hidden">
+    <h1>Toy &amp; Shape Spelling!</h1>
+    <p id="welcome"></p>
+
+    <div class="info">
+      <span id="questionCount">Word: 1 / 13</span>
+      <span id="lives">❤️❤️❤️❤️❤️</span>
+      <span id="score">Score: 0</span>
+    </div>
+
+    <div class="progress">
+      <div id="progressBar"></div>
+    </div>
+
+    <div class="picture">
+      <div id="category">TOYS</div>
+      <div id="emoji" aria-hidden="true">✈️</div>
+    </div>
+
+    <p id="instruction">Listen and spell the word!</p>
+
+    <button class="orange" id="hearButton" type="button">
+      🔊 HEAR THE WORD
+    </button>
+
+    <form id="answerForm">
+      <input id="answer"
+        type="text"
+        placeholder="Type the word here"
+        autocomplete="off"
+        autocapitalize="none"
+        spellcheck="false"
+        lang="en"
+        translate="no"
+        required>
+
+      <button class="green" id="checkButton" type="submit">
+        CHECK ANSWER
+      </button>
+    </form>
+
+    <div id="feedback" aria-live="polite"></div>
+    <p class="small">Listen carefully and type the correct spelling.</p>
+    <p class="teacher">Ms. Ramezanzadeh</p>
+  </section>
+
+  <section id="endScreen" class="hidden">
+    <div id="endEmoji" style="font-size:70px" aria-hidden="true">🏆🎉⭐</div>
+    <h1 id="endTitle">YOU WIN!</h1>
+    <h2 id="finalMessage"></h2>
+    <p id="finalScore"></p>
+    <p id="remainingLives"></p>
+
+    <button id="restartButton" type="button">PLAY AGAIN</button>
+
+    <p class="teacher">Teacher: Ms. Ramezanzadeh</p>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+
+const words = [
+  { word: "Plane", emoji: "✈️", category: "TOYS" },
+  { word: "Train", emoji: "🚂", category: "TOYS" },
+  { word: "Car", emoji: "🚗", category: "TOYS" },
+  { word: "Ball", emoji: "⚽", category: "TOYS" },
+  { word: "Doll", emoji: "🪆", category: "TOYS" },
+  { word: "Monster", emoji: "👾", category: "TOYS" },
+  { word: "Computer game", emoji: "🎮", category: "TOYS" },
+  { word: "Kite", emoji: "🪁", category: "TOYS" },
+  { word: "Bike", emoji: "🚲", category: "TOYS" },
+  { word: "Circle", emoji: "🔵", category: "SHAPES" },
+  { word: "Square", emoji: "🟪", category: "SHAPES" },
+  { word: "Rectangle", emoji: "▰", category: "SHAPES" },
+  { word: "Triangle", emoji: "🔺", category: "SHAPES" }
+];
+
+const $ = id => document.getElementById(id);
+
+let gameWords = [];
+let currentIndex = 0;
+let livesLeft = 5;
+let score = 0;
+let player = "";
+let locked = false;
+let gameEnded = false;
+let speechVoice = null;
+let audioContext = null;
+let nextQuestionTimer = null;
+let speechSupported = ("speechSynthesis" in window);
+
+function chooseEnglishVoice() {
+  if (!speechSupported) return;
+
+  const voices = window.speechSynthesis.getVoices();
+
+  speechVoice =
+    voices.find(v => v.lang.toLowerCase() === "en-gb") ||
+    voices.find(v => v.lang.toLowerCase().startsWith("en-gb")) ||
+    voices.find(v => v.lang.toLowerCase().startsWith("en")) ||
+    null;
+}
+
+if (speechSupported) {
+  chooseEnglishVoice();
+  window.speechSynthesis.onvoiceschanged = chooseEnglishVoice;
+}
+
+function speak(text, rate = 0.85) {
+  if (!speechSupported) return;
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-GB";
+  utterance.rate = rate;
+  utterance.pitch = 1.05;
+  utterance.volume = 1;
+
+  if (speechVoice) {
+    utterance.voice = speechVoice;
+  }
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function speakWord() {
+  if (gameEnded || currentIndex >= gameWords.length) return;
+  speak(gameWords[currentIndex].word, 0.78);
+}
+
+/* Separate sound effects for correct and incorrect answers. */
+function playSound(type) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+
+    if (!audioContext) {
+      audioContext = new AudioCtx();
+    }
+
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    const now = audioContext.currentTime;
+
+    function tone(frequency, start, duration, wave, volume) {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = wave;
+      oscillator.frequency.setValueAtTime(
+        frequency, now + start
+      );
+
+      gain.gain.setValueAtTime(0.0001, now + start);
+      gain.gain.exponentialRampToValueAtTime(
+        volume, now + start + 0.02
+      );
+      gain.gain.setValueAtTime(
+        volume, now + start + duration - 0.03
+      );
+      gain.gain.exponentialRampToValueAtTime(
+        0.0001, now + start + duration
+      );
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start(now + start);
+      oscillator.stop(now + start + duration);
+    }
+
+    if (type === "correct") {
+      tone(660, 0, 0.16, "sine", 0.16);
+      tone(880, 0.14, 0.18, "sine", 0.16);
+      tone(1100, 0.30, 0.24, "sine", 0.16);
+    } else {
+      tone(220, 0, 0.18, "triangle", 0.13);
+      tone(165, 0.17, 0.22, "triangle", 0.13);
+    }
+  } catch (error) {
+    // Continue the game if audio is unavailable.
+  }
+}
+
+function shuffle(array) {
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
+}
+
+function startGame() {
+  player = $("playerName").value.trim();
+
+  if (!player) {
+    $("playerName").placeholder = "Please enter your name!";
+    $("playerName").focus();
+    return;
+  }
+
+  if (nextQuestionTimer !== null) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+
+  if (speechSupported) {
+    window.speechSynthesis.cancel();
+  }
+
+  currentIndex = 0;
+  livesLeft = 5;
+  score = 0;
+  locked = false;
+  gameEnded = false;
+  gameWords = shuffle(words);
+
+  $("startScreen").classList.add("hidden");
+  $("endScreen").classList.add("hidden");
+  $("gameScreen").classList.remove("hidden");
+
+  $("welcome").textContent = "Good luck, " + player + "!";
+
+  showWord();
+}
+
+function updateLives() {
+  $("lives").textContent =
+    "❤️".repeat(livesLeft) + "🤍".repeat(5 - livesLeft);
+}
+
+function showWord() {
+  if (gameEnded) return;
+
+  if (livesLeft <= 0) {
+    endGame(false);
+    return;
+  }
+
+  if (currentIndex >= gameWords.length) {
+    endGame(true);
+    return;
+  }
+
+  locked = false;
+
+  const item = gameWords[currentIndex];
+
+  $("emoji").textContent = item.emoji;
+  $("category").textContent = item.category;
+  $("questionCount").textContent =
+    "Word: " + (currentIndex + 1) + " / " + gameWords.length;
+
+  updateLives();
+
+  $("score").textContent = "Score: " + score;
+  $("progressBar").style.width =
+    (currentIndex / gameWords.length * 100) + "%";
+
+  $("feedback").textContent = "";
+  $("instruction").textContent = "Listen and spell the word!";
+  $("answer").value = "";
+  $("answer").disabled = false;
+  $("checkButton").disabled = false;
+
+  $("answer").focus();
+
+  nextQuestionTimer = setTimeout(() => {
+    nextQuestionTimer = null;
+
+    if (!locked && !gameEnded) {
+      speakWord();
+    }
+  }, 350);
+}
+
+$("startButton").addEventListener("click", startGame);
+
+$("playerName").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    startGame();
+  }
+});
+
+$("hearButton").addEventListener("click", speakWord);
+
+$("answerForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  if (locked || gameEnded) return;
+  if (currentIndex >= gameWords.length) return;
+
+  const typed = $("answer").value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+  const correct = gameWords[currentIndex].word
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+  if (!typed) return;
+
+  if (typed === correct) {
+    locked = true;
+    score++;
+
+    const praises = ["Excellent!", "Perfect!", "Great Job!"];
+    const praise = praises[
+      Math.floor(Math.random() * praises.length)
+    ];
+
+    $("feedback").style.color = "#16a879";
+    $("feedback").textContent = praise + " ⭐";
+    $("score").textContent = "Score: " + score;
+
+    $("progressBar").style.width =
+      ((currentIndex + 1) / gameWords.length * 100) + "%";
+
+    $("answer").disabled = true;
+    $("checkButton").disabled = true;
+
+    playSound("correct");
+    speak(praise);
+
+    nextQuestionTimer = setTimeout(() => {
+      nextQuestionTimer = null;
+
+      if (gameEnded) return;
+
+      currentIndex++;
+
+      // Do not remove a life when an answer is correct.
+      if (currentIndex >= gameWords.length) {
+        endGame(true);
+      } else {
+        showWord();
+      }
+    }, 1300);
+
+  } else {
+    // One incorrect submission removes exactly one life.
+    livesLeft--;
+    updateLives();
+
+    $("feedback").style.color = "#f05b78";
+    $("feedback").textContent = "Try Again! 💪";
+
+    playSound("wrong");
+    speak("Try again!");
+
+    $("answer").value = "";
+    $("answer").disabled = true;
+    $("checkButton").disabled = true;
+
+    if (livesLeft <= 0) {
+      locked = true;
+
+      nextQuestionTimer = setTimeout(() => {
+        nextQuestionTimer = null;
+        endGame(false);
+      }, 900);
+
+    } else {
+      // Allow another attempt on the same word without
+      // removing another life until another wrong answer.
+      locked = true;
+
+      nextQuestionTimer = setTimeout(() => {
+        nextQuestionTimer = null;
+
+        if (gameEnded) return;
+
+        locked = false;
+        $("answer").disabled = false;
+        $("checkButton").disabled = false;
+        $("answer").focus();
+      }, 900);
+    }
+  }
+});
+
+function endGame(won) {
+  if (gameEnded) return;
+
+  gameEnded = true;
+  locked = true;
+
+  if (nextQuestionTimer !== null) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+
+  if (speechSupported) {
+    window.speechSynthesis.cancel();
+  }
+
+  $("gameScreen").classList.add("hidden");
+  $("startScreen").classList.add("hidden");
+  $("endScreen").classList.remove("hidden");
+
+  if (won && livesLeft > 0) {
+    $("endTitle").textContent = "YOU WIN!";
+    $("endEmoji").textContent = "🏆🎉⭐";
+    $("finalMessage").textContent = "Amazing work, " + player + "!";
+    $("remainingLives").textContent =
+      "Lives left: " + livesLeft;
+
+    playSound("correct");
+    speak("Congratulations! You win!");
+
+  } else {
+    $("endTitle").textContent = "GAME OVER!";
+    $("endEmoji").textContent = "🎮💪";
+    $("finalMessage").textContent =
+      "Keep practicing, " + player + "!";
+    $("remainingLives").textContent = "No lives left. Try again!";
+
+    playSound("wrong");
+    speak("Game over. Try again!");
+  }
+
+  $("finalScore").textContent =
+    "Your score: " + score + " / " + gameWords.length;
+}
+
+$("restartButton").addEventListener("click", function() {
+  if (nextQuestionTimer !== null) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+
+  if (speechSupported) {
+    window.speechSynthesis.cancel();
+  }
+
+  gameEnded = false;
+  locked = false;
+
+  $("endScreen").classList.add("hidden");
+  $("gameScreen").classList.add("hidden");
+  $("startScreen").classList.remove("hidden");
+
+  $("playerName").value = player;
+  $("playerName").focus();
+});
+</script>
+
+</body>
+</html>
